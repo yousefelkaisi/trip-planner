@@ -21,6 +21,7 @@ const DEFAULT_DURATION_MIN: Record<string, number> = {
 
 const NO_HOURS = Object.fromEntries(WEEKDAYS.map((d) => [d, null])) as Hours;
 
+/** Median point of each city with 3+ places, keyed by lowercase city name. */
 export function cityRefs(recs: Rec[]): Map<string, Point> {
   const refs = new Map<string, Point>();
   for (const city of new Set(recs.map((r) => r.city.toLowerCase()))) {
@@ -37,6 +38,10 @@ export function cityRefs(recs: Rec[]): Map<string, Point> {
   return refs;
 }
 
+/**
+ * Turns a raw record and its AI extraction into a Place, adding flags for anything uncertain.
+ * Returns null if the result doesn't match PlaceSchema.
+ */
 export function validate(rec: Rec, extraction: AiExtraction | null, refs: Map<string, Point>): Place | null {
   const flags = new Set<Flag>();
 
@@ -70,7 +75,7 @@ export function validate(rec: Rec, extraction: AiExtraction | null, refs: Map<st
   const point = { lat: rec.latitude, lng: rec.longitude };
   const ref = refs.get(rec.city.toLowerCase());
   const inItaly = point.lat >= 35.4 && point.lat <= 47.1 && point.lng >= 6.6 && point.lng <= 18.6;
-  if (!inItaly || (ref && km(point, ref) > 50)) {
+  if (!inItaly || (ref && distanceKm(point, ref) > 50)) {
     flags.add('check-location');
   }
 
@@ -107,11 +112,15 @@ export function validate(rec: Rec, extraction: AiExtraction | null, refs: Map<st
   return place.data;
 }
 
+/** Keeps each weekday's hours only if every slot is well formed; otherwise that day is null. */
 function validHours(hours: AiExtraction['hours']): Hours {
   return Object.fromEntries(WEEKDAYS.map((d) => [d, validDay(hours[d])])) as Hours;
 }
 
-// String comparison works for "HH:MM". A close at or before 06:00 is after midnight.
+/**
+ * Returns the day's slots if every open/close time is valid, otherwise null.
+ * String comparison works for "HH:MM". A close at or before 06:00 is after midnight.
+ */
 function validDay(day: Hours['mon']): Hours['mon'] {
   const valid = day?.every(
     ({ open, close }) =>
@@ -120,7 +129,7 @@ function validDay(day: Hours['mon']): Hours['mon'] {
       open !== '24:00' &&
       (close > open || close <= '06:00'),
   );
-  
+
   return valid ? day : null;
 }
 
@@ -130,7 +139,7 @@ function median(xs: number[]): number {
   return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
 }
 
-// Flat approximation, accurate enough at 50 km.
-function km(a: Point, b: Point): number {
+/** Distance between two points in km. Flat approximation, accurate enough at 50 km. */
+function distanceKm(a: Point, b: Point): number {
   return 111 * Math.hypot(a.lat - b.lat, (a.lng - b.lng) * Math.cos((a.lat * Math.PI) / 180));
 }
