@@ -1,3 +1,43 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+
+@utility btn {
+  @apply rounded-md border border-stone-300 bg-white px-3 py-1.5 text-sm hover:bg-stone-100 disabled:opacity-40;
+}
+
+@utility btn-primary {
+  @apply rounded-md bg-emerald-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-800 disabled:opacity-40;
+}
+
+@utility select {
+  @apply appearance-none rounded-md border border-stone-300 bg-white bg-no-repeat py-1 pr-8 pl-2 text-sm;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='%2378716c' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.5rem center;
+  background-size: 1rem;
+}
+
+@utility badge {
+  @apply rounded px-1.5 py-0.5 text-xs;
+}
+
+body {
+  @apply bg-stone-100 text-stone-900;
+}
+
+/* Shows the element's data-tooltip text right away on hover or keyboard focus. */
+[data-tooltip] {
+  @apply relative;
+}
+
+[data-tooltip]:hover::after,
+[data-tooltip]:focus-visible::after {
+  content: attr(data-tooltip);
+  @apply absolute top-full left-0 z-20 mt-1 w-56 rounded-md bg-stone-800 px-2 py-1 text-xs text-white shadow-lg;
+}
+
+.cdk-drag-preview {
+  @apply rounded-lg shadow-lg;
+}
+
+.cdk-drag-placeholder {
+  @apply opacity-30;
+}

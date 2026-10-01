@@ -1,0 +1,32 @@
+<header
+  class="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-stone-200 bg-white px-4 py-3"
+>
+  <h1 class="text-lg font-semibold">3 Days in Italy</h1>
+
+  @if (store.trip(); as trip) {
+    <label class="flex items-center gap-2 text-sm">
+      Starts
+      <input
+        #date
+        type="date"
+        required
+        class="rounded-md border border-stone-300 px-2 py-1"
+        [min]="today"
+        [value]="trip.startDate"
+        (change)="setStartDate(date)"
+        (blur)="date.value = trip.startDate"
+      />
+    </label>
+    <p class="text-sm text-stone-500">{{ cities() }}</p>
+  }
+
+  <div class="ml-auto flex gap-2">
+    <button type="button" class="btn" [disabled]="!store.canUndo()" (click)="store.undo()">
+      Undo
+    </button>
+    <button type="button" class="btn" [disabled]="!store.canRedo()" (click)="store.redo()">
+      Redo
+    </button>
+    <button type="button" class="btn-primary" (click)="newTrip.emit()">New trip</button>
+  </div>
+</header>

@@ -1,0 +1,83 @@
+<section class="flex h-full flex-col gap-2 rounded-xl border border-stone-200 bg-stone-50 p-3">
+  <header class="flex items-center justify-between gap-2">
+    <h2 class="font-semibold">
+      Day {{ index() + 1 }}
+      <span class="font-normal text-stone-500">· {{ day().date | date: 'EEE d MMM' }}</span>
+    </h2>
+    <select #city aria-label="City" class="select" (change)="setHub(city)">
+      @for (hub of hubIds; track hub) {
+        <option [value]="hub" [selected]="hub === day().hub">{{ hubs[hub].name }}</option>
+      }
+    </select>
+  </header>
+
+  @if (day().transferMinutes; as minutes) {
+    <p class="rounded-md bg-sky-50 px-2 py-1 text-xs text-sky-800">
+      Morning train to {{ hubs[day().hub].name }} · ~{{ minutes }} min, station to station
+    </p>
+  }
+
+  <div
+    cdkDropList
+    class="flex min-h-24 flex-col gap-2 lg:-mx-1 lg:flex-1 lg:overflow-y-auto lg:px-1"
+    [cdkDropListData]="index()"
+    (cdkDropListDropped)="drop($event)"
+  >
+    @for (stop of day().stops; track stop.place.id; let i = $index) {
+      <app-stop-card
+        cdkDrag
+        [cdkDragData]="stop.place.id"
+        [cdkDragStartDelay]="{ touch: 250, mouse: 0 }"
+        [stop]="stop"
+        [issues]="stopIssues().get(stop.place.id) ?? []"
+        [first]="$first"
+        [last]="$last"
+        [moveTargets]="moveTargets()"
+        (moveBy)="moveBy(stop.place.id, i, $event)"
+        (moveTo)="moveTo(stop.place.id, $event)"
+        (remove)="remove(stop.place.id)"
+        (details)="details.emit(stop.place.id)"
+      />
+    } @empty {
+      <p
+        class="rounded-lg border border-dashed border-stone-300 p-4 text-center text-sm text-stone-500"
+      >
+        Drag places here, or use Fill day.
+      </p>
+    }
+  </div>
+
+  @if (day().legOut; as leg) {
+    <p class="text-xs text-stone-500">
+      ~{{ leg.minutes }} min {{ modeLabels[leg.mode] }} back to the station · back at
+      {{ formatTime(day().endsAt) }}
+      @if (day().endsAt >= 1440) {
+        (next day)
+      }
+    </p>
+  }
+
+  <div class="flex gap-2">
+    <span [attr.data-tooltip]="canFill() ? null : fullHint">
+      <button type="button" class="btn" [disabled]="!canFill()" (click)="fillDay()">
+        Fill day
+      </button>
+    </span>
+    <button type="button" class="btn" [disabled]="day().stops.length === 0" (click)="clear()">
+      Clear
+    </button>
+  </div>
+
+  @for (issue of dayIssues(); track issue.message) {
+    <p class="rounded px-2 py-1 text-xs" [class]="severityClasses[issue.severity]">
+      {{ issue.message }}
+    </p>
+  }
+
+  @if (day().stops.length > 0) {
+    <p class="text-xs text-stone-500">
+      {{ day().totals.visiting }} min visiting · {{ day().totals.travel }} min travel ·
+      {{ day().totals.waiting }} min free
+    </p>
+  }
+</section>

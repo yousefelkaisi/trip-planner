@@ -1,0 +1,81 @@
+@let place = stop().place;
+<article
+  class="flex cursor-grab flex-col gap-1 rounded-lg border border-stone-200 bg-white p-2 shadow-sm"
+>
+  <p class="text-xs text-stone-500">
+    ~{{ stop().legIn.minutes }} min {{ modeLabels[stop().legIn.mode] }}
+  </p>
+
+  <div class="flex items-start justify-between gap-2">
+    <div>
+      <p class="text-sm tabular-nums text-stone-600">
+        {{ formatTime(stop().start) }}–{{ formatTime(stop().end) }}
+        @if (stop().end >= 1440) {
+          (next day)
+        }
+      </p>
+      <h3>
+        <button
+          type="button"
+          class="text-left leading-snug font-medium hover:underline"
+          (click)="details.emit()"
+        >
+          {{ place.name }}
+        </button>
+      </h3>
+    </div>
+
+    <button
+      type="button"
+      class="cursor-pointer rounded px-2 text-lg leading-none hover:bg-stone-100"
+      aria-label="Stop actions"
+      [cdkMenuTriggerFor]="menu"
+      [cdkMenuPosition]="menuPositions"
+    >
+      ⋯
+    </button>
+  </div>
+
+  @if (place.flags.length > 0 || place.bookingRequired) {
+    <div class="flex flex-wrap gap-1">
+      @if (place.bookingRequired) {
+        <span class="badge bg-violet-50 text-violet-800">Booking required</span>
+      }
+      @for (flag of place.flags; track flag) {
+        <span class="badge bg-stone-100 text-stone-600" tabindex="0" [attr.data-tooltip]="flagHint">
+          {{ flagLabels[flag] }}
+        </span>
+      }
+    </div>
+  }
+
+  @for (issue of issues(); track issue.code) {
+    <p class="badge" [class]="severityClasses[issue.severity]">
+      {{ issue.message }}
+    </p>
+  }
+</article>
+
+<!-- Opens in an overlay, so the day's scroll area can't clip it. -->
+<ng-template #menu>
+  <div
+    cdkMenu
+    class="flex w-40 flex-col rounded-md border border-stone-200 bg-white py-1 text-sm shadow-lg *:px-3 *:py-1.5 *:text-left *:outline-none *:hover:bg-stone-100 *:focus:bg-stone-100"
+  >
+    <button type="button" cdkMenuItem (cdkMenuItemTriggered)="details.emit()">Details</button>
+    @if (!first()) {
+      <button type="button" cdkMenuItem (cdkMenuItemTriggered)="moveBy.emit(-1)">Move up</button>
+    }
+    @if (!last()) {
+      <button type="button" cdkMenuItem (cdkMenuItemTriggered)="moveBy.emit(1)">Move down</button>
+    }
+    @for (day of moveTargets(); track day) {
+      <button type="button" cdkMenuItem (cdkMenuItemTriggered)="moveTo.emit(day)">
+        Move to Day {{ day + 1 }}
+      </button>
+    }
+    <button type="button" cdkMenuItem class="text-red-700" (cdkMenuItemTriggered)="remove.emit()">
+      Remove
+    </button>
+  </div>
+</ng-template>

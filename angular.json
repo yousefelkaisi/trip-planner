@@ -2,7 +2,8 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "analytics": "39df189a-bbf9-4c45-8363-f01a890a52dc"
   },
   "newProjectRoot": "projects",
   "projects": {
@@ -17,6 +18,7 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "src/main.ts",
+            "allowedCommonJsDependencies": ["leaflet"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -24,7 +26,8 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.css"]
+            "styles": ["node_modules/leaflet/dist/leaflet.css", "src/styles.css"],
+            "define": { "CARTO_KEY": "''" }
           },
           "configurations": {
             "production": {

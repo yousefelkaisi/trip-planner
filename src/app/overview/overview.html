@@ -1,0 +1,56 @@
+<section
+  class="@container flex h-full flex-col gap-4 rounded-xl border border-stone-200 bg-stone-50 p-3 lg:overflow-y-auto"
+>
+  <dl class="grid grid-cols-2 gap-2 @xl:grid-cols-4">
+    @for (stat of stats(); track stat.label) {
+      <div class="rounded-lg border border-stone-200 bg-white px-3 py-2">
+        <dt class="text-xs text-stone-500">{{ stat.label }}</dt>
+        <dd class="font-semibold tabular-nums">{{ stat.value }}</dd>
+      </div>
+    }
+  </dl>
+
+  @for (day of days(); track $index) {
+    <section class="flex flex-col gap-2">
+      <h2 class="flex items-center gap-2 font-semibold">
+        <span class="size-3 rounded-full" [class]="dayColors[$index].bg"></span>
+        Day {{ $index + 1 }} · {{ hubs[day.hub].name }}
+        <span class="font-normal text-stone-500">· {{ day.date | date: 'EEE d MMM' }}</span>
+      </h2>
+
+      @if (day.transferMinutes; as minutes) {
+        <p class="text-xs text-sky-800">
+          Morning train from {{ hubs[days()[$index - 1].hub].name }} · ~{{ minutes }} min
+        </p>
+      }
+
+      <ol class="divide-y divide-stone-200 rounded-lg border border-stone-200 bg-white">
+        @for (stop of day.stops; track stop.place.id) {
+          <li class="flex gap-3 px-3 py-1.5 text-sm">
+            <span class="shrink-0 tabular-nums text-stone-500">
+              {{ formatTime(stop.start) }}–{{ formatTime(stop.end) }}
+            </span>
+            <button
+              type="button"
+              class="text-left hover:underline"
+              (click)="details.emit(stop.place.id)"
+            >
+              {{ stop.place.name }}
+            </button>
+          </li>
+        } @empty {
+          <li class="px-3 py-2 text-sm text-stone-500">No stops planned.</li>
+        }
+      </ol>
+
+      @if (day.legOut) {
+        <p class="text-xs text-stone-500">
+          Back at the station at {{ formatTime(day.endsAt) }}
+          @if (day.endsAt >= 1440) {
+            (next day)
+          }
+        </p>
+      }
+    </section>
+  }
+</section>

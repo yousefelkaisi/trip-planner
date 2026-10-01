@@ -1,0 +1,176 @@
+<main class="mx-auto flex min-h-screen max-w-2xl flex-col gap-6 px-4 py-10">
+  <header>
+    <h1 class="text-2xl font-semibold">3 Days in Italy</h1>
+    <p class="text-sm text-stone-500">
+      Step {{ step() }} of {{ steps.length }} · {{ steps[step() - 1] }}
+    </p>
+  </header>
+
+  <section class="flex flex-col gap-6 rounded-xl border border-stone-200 bg-white p-6">
+    @switch (step()) {
+      @case (1) {
+        <label class="flex flex-col gap-1">
+          <span class="font-medium">Start date</span>
+          <input
+            #date
+            type="date"
+            required
+            class="w-48 rounded-md border border-stone-300 px-2 py-1"
+            [min]="today"
+            [value]="startDate()"
+            (change)="setStartDate(date)"
+            (blur)="date.value = startDate()"
+          />
+        </label>
+
+        <fieldset class="flex flex-col gap-2">
+          <legend class="mb-2 font-medium">Pace</legend>
+          <div class="grid gap-2 sm:grid-cols-3">
+            @for (name of paceNames; track name) {
+              <label
+                class="flex cursor-pointer flex-col rounded-lg border p-3 has-checked:border-emerald-600 has-checked:bg-emerald-50 has-focus-visible:ring-2 has-focus-visible:ring-emerald-600"
+              >
+                <input
+                  type="radio"
+                  name="pace"
+                  class="sr-only"
+                  [checked]="pace() === name"
+                  (change)="pace.set(name)"
+                />
+                <span class="font-medium capitalize">{{ name }}</span>
+                <span class="text-sm text-stone-500">
+                  From {{ formatTime(paces[name].start) }} · {{ paces[name].sights }} sights a day
+                </span>
+              </label>
+            }
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="mb-2 font-medium">Budget</legend>
+          <div class="flex flex-wrap gap-2">
+            @for (price of prices; track price) {
+              <label
+                class="cursor-pointer rounded-lg border px-3 py-1.5 has-checked:border-emerald-600 has-checked:bg-emerald-50 has-focus-visible:ring-2 has-focus-visible:ring-emerald-600"
+              >
+                <input
+                  type="radio"
+                  name="budget"
+                  class="sr-only"
+                  [checked]="maxPrice() === price"
+                  (change)="maxPrice.set(price)"
+                />
+                Up to {{ '€'.repeat(price) }}{{ $last ? ' (no limit)' : '' }}
+              </label>
+            }
+          </div>
+        </fieldset>
+      }
+
+      @case (2) {
+        <fieldset>
+          <legend class="mb-2 font-medium">Things you like</legend>
+          <div class="flex flex-wrap gap-2">
+            @for (tag of tags; track tag) {
+              <button
+                type="button"
+                class="rounded-full border px-3 py-1 text-sm disabled:opacity-30 aria-pressed:border-emerald-600 aria-pressed:bg-emerald-50"
+                [attr.aria-pressed]="interests().includes(tag)"
+                [disabled]="avoid().includes(tag)"
+                (click)="toggle(interests, tag)"
+              >
+                {{ tag }}
+              </button>
+            }
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="mb-2 font-medium">Things to avoid</legend>
+          <div class="flex flex-wrap gap-2">
+            @for (tag of tags; track tag) {
+              <button
+                type="button"
+                class="rounded-full border px-3 py-1 text-sm disabled:opacity-30 aria-pressed:border-red-600 aria-pressed:bg-red-50"
+                [attr.aria-pressed]="avoid().includes(tag)"
+                [disabled]="interests().includes(tag)"
+                (click)="toggle(avoid, tag)"
+              >
+                {{ tag }}
+              </button>
+            }
+          </div>
+        </fieldset>
+      }
+
+      @case (3) {
+        @for (hub of dayHubs(); track $index; let i = $index) {
+          <div class="flex flex-col gap-1">
+            <label class="flex flex-wrap items-center gap-3">
+              <span class="w-36 font-medium">
+                Day {{ i + 1 }} · {{ addDays(startDate(), i) | date: 'EEE d MMM' }}
+              </span>
+              <select
+                #city
+                class="select"
+                (change)="setHub(i, city.value)"
+              >
+                @for (id of hubIds; track id) {
+                  <option [value]="id" [selected]="id === hub">
+                    {{ hubs[id].name }} · {{ matches()[id] }} {{ matches()[id] === 1 ? 'match' : 'matches' }}
+                  </option>
+                }
+              </select>
+            </label>
+
+            @if (preview()[i]; as day) {
+              <p class="text-sm text-stone-500">
+                {{ day.names.length }} {{ day.names.length === 1 ? 'stop' : 'stops' }}:
+                {{ day.names.join(' · ') }}
+              </p>
+              @if (day.short) {
+                <p class="text-sm text-amber-700">
+                  {{ hubs[hub].name }} has no more places for Day {{ i + 1 }}.
+                  @if (dayTrips()) {
+                    Choose another city.
+                  } @else {
+                    Turn on day trips or choose another city.
+                  }
+                </p>
+              }
+            }
+          </div>
+        }
+
+        <label class="flex items-center gap-2">
+          <input
+            #trips
+            type="checkbox"
+            [checked]="dayTrips()"
+            (change)="dayTrips.set(trips.checked)"
+          />
+          Include day trips outside the city (Siena, Burano, Lake Como…)
+        </label>
+      }
+    }
+
+    @if (store.error(); as error) {
+      <p role="alert" class="rounded-md bg-red-50 px-3 py-2 text-sm text-red-800">{{ error }}</p>
+    }
+  </section>
+
+  <footer class="flex gap-2">
+    @if (canCancel) {
+      <button type="button" class="btn" (click)="done.emit()">Cancel</button>
+    }
+    <span class="flex-1"></span>
+    @if (step() > 1) {
+      <button type="button" class="btn" (click)="step.set(step() - 1)">Back</button>
+    }
+    @if (step() < steps.length) {
+      <button type="button" class="btn-primary" (click)="step.set(step() + 1)">Next</button>
+    } @else {
+      <button type="button" class="btn-primary" (click)="build()">Build my trip</button>
+    }
+  </footer>
+</main>

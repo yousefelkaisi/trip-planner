@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "[ -f .env ] && set -a && . ./.env; ng serve --define \"CARTO_KEY='$CARTO_KEY'\"",
+    "build": "[ -f .env ] && set -a && . ./.env; ng build --define \"CARTO_KEY='$CARTO_KEY'\"",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "data": "tsx pipeline/build.ts",
@@ -16,12 +16,13 @@
   "private": true,
   "packageManager": "npm@11.19.0",
   "dependencies": {
+    "@angular/cdk": "^22.2.1",
     "@angular/common": "^22.2.0",
     "@angular/compiler": "^22.2.0",
     "@angular/core": "^22.2.0",
     "@angular/forms": "^22.2.0",
     "@angular/platform-browser": "^22.2.0",
-    "@angular/router": "^22.2.0",
+    "leaflet": "^1.9.4",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zod": "^4.6.5"
@@ -32,6 +33,7 @@
     "@angular/compiler-cli": "^22.2.0",
     "@anthropic-ai/sdk": "^0.130.0",
     "@tailwindcss/postcss": "^4.1.12",
+    "@types/leaflet": "^1.9.22",
     "@types/node": "^26.6.3",
     "iconv-lite": "^0.7.3",
     "jsdom": "^30.0.0",
@@ -42,5 +44,8 @@
     "typescript": "~6.0.2",
     "vitest": "^5.0.0"
   },
-  "type": "module"
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  }
 }
