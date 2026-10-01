@@ -23,9 +23,16 @@
   },
   {
     "id": "place_037",
-    "alwaysOpen": false,
-    "closedDays": [],
-    "flags": ["hours-approximate"],
+    "hours": {
+      "mon": null,
+      "tue": null,
+      "wed": null,
+      "thu": null,
+      "fri": null,
+      "sat": null,
+      "sun": null
+    },
+    "flags": [],
     "bestTime": "evening"
   },
   {
@@ -93,6 +100,7 @@
   { "id": "place_023", "bestTime": "morning" },
   { "id": "place_077", "bestTime": "night" },
   { "id": "place_008", "bestTime": "night" },
+  { "id": "place_079", "bestTime": "night" },
   { "id": "place_040", "bestTime": "afternoon" },
   { "id": "place_053", "bestTime": "morning" },
   { "id": "place_016", "bestTime": "morning" },
@@ -112,6 +120,35 @@
     },
     "bestTime": "afternoon"
   },
+  {
+    "id": "synthetic_evenings",
+    "record": {
+      "id": "synthetic_evenings",
+      "name": "Bar Lucia",
+      "type": "cafe",
+      "city": "Turin",
+      "region": "Piedmont",
+      "latitude": 45.0703,
+      "longitude": 7.6869,
+      "description": "A small neighbourhood wine bar with a short list of Piedmont reds and plates of salumi.",
+      "hours": "Evenings",
+      "duration_minutes": 60,
+      "tags": ["wine", "local-favorite"]
+    },
+    "hours": {
+      "mon": null,
+      "tue": null,
+      "wed": null,
+      "thu": null,
+      "fri": null,
+      "sat": null,
+      "sun": null
+    },
+    "flags": [],
+    "bestTime": "evening"
+  },
   { "id": "place_001", "bestTime": null },
-  { "id": "place_005", "bestTime": null }
+  { "id": "place_005", "bestTime": null },
+  { "id": "place_041", "bestTime": null },
+  { "id": "place_061", "bestTime": null }
 ]

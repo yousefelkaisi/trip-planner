@@ -13,6 +13,13 @@ export const PACES = {
   packed: { start: 510, buffer: 0, sights: 6 },
 };
 
+export const BEST_TIME_WINDOWS = {
+  morning: { from: 0, to: 720 }, // before 12:00
+  afternoon: { from: 720, to: 1080 }, // 12:00–18:00
+  evening: { from: 1080, to: 1440 }, // from 18:00
+  night: { from: 1260, to: 1440 }, // from 21:00
+};
+
 export const MEALS = [
   { name: 'lunch', start: 720, end: 900 },
   { name: 'dinner', start: 1140, end: 1320 },
@@ -75,6 +82,11 @@ export function scheduleDay(trip: Trip, day: number, catalog: Catalog): Schedule
       }
     }
 
+    // A stop with a bestTime waits for its window, as a restaurant waits for its meal.
+    if (place.bestTime) {
+      earliest = Math.max(earliest, BEST_TIME_WINDOWS[place.bestTime].from);
+    }
+
     const hours = hoursOn(place, date);
     let start = earliest;
     if (hours.status === 'open') {
@@ -112,6 +124,14 @@ export function scheduleDay(trip: Trip, day: number, catalog: Catalog): Schedule
       if (meal) {
         usedMeals.add(meal.name);
       }
+    }
+    if (place.bestTime && start > BEST_TIME_WINDOWS[place.bestTime].to) {
+      issues.push({
+        code: 'AFTER_BEST_TIME',
+        severity: 'warning',
+        placeId: id,
+        message: `Starts at ${formatTime(start)}, after its best time (${place.bestTime})`,
+      });
     }
     if (start - arrive > 45) {
       issues.push({

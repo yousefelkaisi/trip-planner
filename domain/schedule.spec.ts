@@ -96,6 +96,26 @@ describe('scheduleDay', () => {
     expect(codes(day)).toContain('HOURS_UNKNOWN');
   });
 
+  it("waits for a stop's bestTime", () => {
+    const day = schedule(makePlace({ bestTime: 'evening', hours: allDay }));
+    expect(day.stops[0].start).toBe(1080);
+    expect(codes(day)).toContain('LONG_WAIT');
+    expect(codes(day)).not.toContain('AFTER_BEST_TIME');
+  });
+
+  it('warns about a stop that starts after its bestTime', () => {
+    const day = schedule(
+      makePlace({ id: 'a', durationMin: 240 }),
+      makePlace({ id: 'b', bestTime: 'morning' }),
+    );
+    expect(day.issues).toContainEqual(
+      expect.objectContaining({
+        code: 'AFTER_BEST_TIME',
+        message: 'Starts at 13:15, after its best time (morning)',
+      }),
+    );
+  });
+
   it('reports missing meals only on a day with stops', () => {
     expect(codes(schedule(makePlace()))).toEqual(['NO_MEAL', 'NO_MEAL']);
     expect(schedule().issues).toEqual([]);

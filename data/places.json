@@ -432,48 +432,13 @@
       "priceLevel": 1,
       "bookingRequired": false,
       "hours": {
-        "mon": [
-          {
-            "open": "07:00",
-            "close": "14:00"
-          }
-        ],
-        "tue": [
-          {
-            "open": "07:00",
-            "close": "14:00"
-          }
-        ],
-        "wed": [
-          {
-            "open": "07:00",
-            "close": "14:00"
-          }
-        ],
-        "thu": [
-          {
-            "open": "07:00",
-            "close": "14:00"
-          }
-        ],
-        "fri": [
-          {
-            "open": "07:00",
-            "close": "14:00"
-          }
-        ],
-        "sat": [
-          {
-            "open": "07:00",
-            "close": "14:00"
-          }
-        ],
-        "sun": [
-          {
-            "open": "07:00",
-            "close": "14:00"
-          }
-        ]
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
       },
       "openMonths": [
         1,
@@ -491,9 +456,7 @@
       ],
       "durationMin": 60,
       "bestTime": "morning",
-      "flags": [
-        "hours-approximate"
-      ],
+      "flags": [],
       "source": {
         "hours": "Morning only",
         "seasonalNotes": null
@@ -2764,48 +2727,13 @@
       "priceLevel": 1,
       "bookingRequired": false,
       "hours": {
-        "mon": [
-          {
-            "open": "18:00",
-            "close": "23:00"
-          }
-        ],
-        "tue": [
-          {
-            "open": "18:00",
-            "close": "23:00"
-          }
-        ],
-        "wed": [
-          {
-            "open": "18:00",
-            "close": "23:00"
-          }
-        ],
-        "thu": [
-          {
-            "open": "18:00",
-            "close": "23:00"
-          }
-        ],
-        "fri": [
-          {
-            "open": "18:00",
-            "close": "23:00"
-          }
-        ],
-        "sat": [
-          {
-            "open": "18:00",
-            "close": "23:00"
-          }
-        ],
-        "sun": [
-          {
-            "open": "18:00",
-            "close": "23:00"
-          }
-        ]
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
       },
       "openMonths": [
         1,
@@ -2823,9 +2751,7 @@
       ],
       "durationMin": 90,
       "bestTime": "evening",
-      "flags": [
-        "hours-approximate"
-      ],
+      "flags": [],
       "source": {
         "hours": "Evenings",
         "seasonalNotes": null
@@ -5113,48 +5039,13 @@
       "priceLevel": 1,
       "bookingRequired": false,
       "hours": {
-        "mon": [
-          {
-            "open": "18:00",
-            "close": "22:00"
-          }
-        ],
-        "tue": [
-          {
-            "open": "18:00",
-            "close": "22:00"
-          }
-        ],
-        "wed": [
-          {
-            "open": "18:00",
-            "close": "22:00"
-          }
-        ],
-        "thu": [
-          {
-            "open": "18:00",
-            "close": "22:00"
-          }
-        ],
-        "fri": [
-          {
-            "open": "18:00",
-            "close": "22:00"
-          }
-        ],
-        "sat": [
-          {
-            "open": "18:00",
-            "close": "22:00"
-          }
-        ],
-        "sun": [
-          {
-            "open": "18:00",
-            "close": "22:00"
-          }
-        ]
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
       },
       "openMonths": [
         1,
@@ -5172,9 +5063,7 @@
       ],
       "durationMin": 180,
       "bestTime": "evening",
-      "flags": [
-        "hours-approximate"
-      ],
+      "flags": [],
       "source": {
         "hours": "Evenings",
         "seasonalNotes": null
@@ -5889,48 +5778,13 @@
       "priceLevel": 2,
       "bookingRequired": false,
       "hours": {
-        "mon": [
-          {
-            "open": "18:00",
-            "close": "02:00"
-          }
-        ],
-        "tue": [
-          {
-            "open": "18:00",
-            "close": "02:00"
-          }
-        ],
-        "wed": [
-          {
-            "open": "18:00",
-            "close": "02:00"
-          }
-        ],
-        "thu": [
-          {
-            "open": "18:00",
-            "close": "02:00"
-          }
-        ],
-        "fri": [
-          {
-            "open": "18:00",
-            "close": "02:00"
-          }
-        ],
-        "sat": [
-          {
-            "open": "18:00",
-            "close": "02:00"
-          }
-        ],
-        "sun": [
-          {
-            "open": "18:00",
-            "close": "02:00"
-          }
-        ]
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
       },
       "openMonths": [
         1,
@@ -5948,9 +5802,7 @@
       ],
       "durationMin": 90,
       "bestTime": "night",
-      "flags": [
-        "hours-approximate"
-      ],
+      "flags": [],
       "source": {
         "hours": "Evenings",
         "seasonalNotes": null
@@ -7436,48 +7288,13 @@
       "priceLevel": 2,
       "bookingRequired": false,
       "hours": {
-        "mon": [
-          {
-            "open": "18:00",
-            "close": "23:00"
-          }
-        ],
-        "tue": [
-          {
-            "open": "18:00",
-            "close": "23:00"
-          }
-        ],
-        "wed": [
-          {
-            "open": "18:00",
-            "close": "23:00"
-          }
-        ],
-        "thu": [
-          {
-            "open": "18:00",
-            "close": "23:00"
-          }
-        ],
-        "fri": [
-          {
-            "open": "18:00",
-            "close": "23:00"
-          }
-        ],
-        "sat": [
-          {
-            "open": "18:00",
-            "close": "23:00"
-          }
-        ],
-        "sun": [
-          {
-            "open": "18:00",
-            "close": "23:00"
-          }
-        ]
+        "mon": null,
+        "tue": null,
+        "wed": null,
+        "thu": null,
+        "fri": null,
+        "sat": null,
+        "sun": null
       },
       "openMonths": [
         1,
@@ -7495,9 +7312,7 @@
       ],
       "durationMin": 180,
       "bestTime": "evening",
-      "flags": [
-        "hours-approximate"
-      ],
+      "flags": [],
       "source": {
         "hours": "Evenings",
         "seasonalNotes": null

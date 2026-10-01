@@ -45,8 +45,8 @@ export function cityRefs(recs: Rec[]): Map<string, Point> {
 export function validate(rec: Rec, extraction: AiExtraction | null, refs: Map<string, Point>): Place | null {
   const flags = new Set<Flag>();
 
-  // Hours the record doesn't state stay null, whatever the model returns.
-  let hours = extraction && rec.hours ? validHours(extraction.hours) : NO_HOURS;
+  const statesTimes = /\d/.test(rec.hours ?? '');
+  let hours = extraction && statesTimes ? validHours(extraction.hours) : NO_HOURS;
   let openMonths = extraction?.openMonths.every((m) => m >= 1 && m <= 12)
     ? extraction.openMonths
     : null;
@@ -56,14 +56,10 @@ export function validate(rec: Rec, extraction: AiExtraction | null, refs: Map<st
   }
 
   const noHours = WEEKDAYS.every((d) => hours[d] === null);
-  if (!extraction || (rec.hours && noHours)) {
+  if (!extraction || (statesTimes && noHours)) {
     flags.add('not-interpreted');
     hours = NO_HOURS;
     openMonths = null;
-  }
-
-  if (!/\d/.test(rec.hours ?? '') && WEEKDAYS.some((d) => hours[d]?.length)) {
-    flags.add('hours-approximate');
   }
 
   let durationMin = rec.duration_minutes ?? extraction?.durationMin ?? null;

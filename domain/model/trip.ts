@@ -36,7 +36,13 @@ export type Command =
   | { type: 'clearDay'; day: number };
 
 export type IssueCode =
-  'CLOSED' | 'CLOSES_DURING_VISIT' | 'DAY_OVERRUN' | 'LONG_WAIT' | 'HOURS_UNKNOWN' | 'NO_MEAL';
+  | 'CLOSED'
+  | 'CLOSES_DURING_VISIT'
+  | 'DAY_OVERRUN'
+  | 'LONG_WAIT'
+  | 'HOURS_UNKNOWN'
+  | 'AFTER_BEST_TIME'
+  | 'NO_MEAL';
 
 export interface Issue {
   code: IssueCode;

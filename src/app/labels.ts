@@ -3,7 +3,6 @@ import type { Issue } from '@domain/model/trip';
 import type { Leg } from '@domain/travel';
 
 export const FLAG_LABELS: Record<Place['flags'][number], string> = {
-  'hours-approximate': 'Hours approximate',
   'check-dates': 'Check dates',
   'check-location': 'Check location',
   'duration-estimated': 'Duration estimated',

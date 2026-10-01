@@ -83,10 +83,9 @@
       }
       <span class="text-stone-500">Months</span>
       <span>{{ months() }}</span>
-      <!-- The original text, so rules the planner doesn't enforce are still visible. -->
-      @if (p.source.hours) {
-        <span class="text-stone-500">As listed</span>
-        <span>{{ p.source.hours }}</span>
+      @if (p.bestTime) {
+        <span class="text-stone-500">Best time</span>
+        <span class="capitalize">{{ p.bestTime }}</span>
       }
     </section>
 

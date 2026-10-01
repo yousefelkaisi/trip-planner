@@ -69,9 +69,10 @@ describe('bestInsertion', () => {
   });
 
   it('moves a stop toward its bestTime', () => {
+    const allDay = everyDay([{ open: '00:00', close: '24:00' }]);
     const catalog = catalogOf(
-      makePlace({ id: 'a' }),
-      makePlace({ id: 'night', bestTime: 'evening' }),
+      makePlace({ id: 'a', hours: allDay }),
+      makePlace({ id: 'night', bestTime: 'evening', hours: allDay }),
     );
     const trip = makeTrip([{ hub: 'rome', stops: ['a'] }]);
     expect(bestInsertion(trip, 0, 'night', catalog)).toBe(1);
@@ -97,16 +98,17 @@ describe('bestInsertion', () => {
   });
 
   it('never trades an error for a bestTime', () => {
+    // Before 'a', the morning stop is on time but 'a' then closes during its visit.
     const catalog = catalogOf(
-      makePlace({ id: 'a' }),
       makePlace({
-        id: 'night',
-        bestTime: 'evening',
-        hours: everyDay([{ open: '09:00', close: '10:00' }]),
+        id: 'a',
+        durationMin: 240,
+        hours: everyDay([{ open: '09:00', close: '13:00' }]),
       }),
+      makePlace({ id: 'early', bestTime: 'morning' }),
     );
     const trip = makeTrip([{ hub: 'rome', stops: ['a'] }]);
-    expect(bestInsertion(trip, 0, 'night', catalog)).toBe(0);
+    expect(bestInsertion(trip, 0, 'early', catalog)).toBe(1);
   });
 });
 

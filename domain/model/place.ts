@@ -28,13 +28,7 @@ export const PlaceSchema = z.object({
   durationMin: z.int().check(z.minimum(5), z.maximum(720)),
   bestTime: z.nullable(z.enum(BEST_TIMES)),
   flags: z.array(
-    z.enum([
-      'hours-approximate',
-      'check-dates',
-      'check-location',
-      'duration-estimated',
-      'not-interpreted',
-    ]),
+    z.enum(['check-dates', 'check-location', 'duration-estimated', 'not-interpreted']),
   ),
   source: z.object({ hours: z.nullable(z.string()), seasonalNotes: z.nullable(z.string()) }),
 });

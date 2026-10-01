@@ -50,9 +50,8 @@ export class TripMap {
   constructor() {
     const destroyRef = inject(DestroyRef);
 
-    // Leaflet is loaded on demand to keep it out of the initial bundle.
     afterNextRender(async () => {
-      const L = await import('leaflet');
+      const L = (await import('leaflet')).default;
       // The board may have closed (e.g. "New trip") while Leaflet was loading.
       if (destroyRef.destroyed) {
         return;

@@ -2,16 +2,11 @@ import { addDays, hoursOn } from './hours';
 import { HUBS } from './hubs';
 import type { Place } from './model/place';
 import type { Catalog, Prefs, Trip } from './model/trip';
-import { DAY_END, PACES, type ScheduledDay, scheduleDay } from './schedule';
+import { BEST_TIME_WINDOWS, DAY_END, PACES, type ScheduledDay, scheduleDay } from './schedule';
 
 const UNPLANNABLE = ['check-dates', 'check-location', 'not-interpreted'];
-// When a stop with each bestTime should start, in minutes after midnight.
-const BEST_TIME_WINDOWS = {
-  morning: { from: 0, to: 720 }, // before 12:00
-  afternoon: { from: 720, to: 1080 }, // 12:00–18:00
-  evening: { from: 1080, to: 1440 }, // from 18:00
-  night: { from: 1260, to: 1440 }, // from 21:00
-};
+// Each minute a stop starts after its bestTime costs this many minutes of travel or waiting.
+const BEST_TIME_WEIGHT = 3;
 
 export function score(place: Place, prefs: Prefs): { score: number; reasons: string[] } {
   const matches = place.tags.filter((t) => prefs.interests.includes(t));
@@ -52,16 +47,21 @@ export function bestInsertion(trip: Trip, day: number, placeId: string, catalog:
   for (let i = 0; i <= trip.days[day].stops.length; i++) {
     const s = scheduleDay(withStop(trip, day, placeId, i), day, catalog);
 
-    // Minutes each stop starts outside its bestTime, weighed like travel and waiting.
-    let offTime = 0;
+    // Minutes each stop starts after its bestTime. The schedule already waits for the window to open.
+    let late = 0;
     for (const { place, start } of s.stops) {
       if (place.bestTime) {
-        const { from, to } = BEST_TIME_WINDOWS[place.bestTime];
-        offTime += Math.max(0, from - start, start - to);
+        late += Math.max(0, start - BEST_TIME_WINDOWS[place.bestTime].to);
       }
     }
 
-    const cost = 1000 * errorCount(s) + s.totals.travel + s.totals.waiting + Math.max(0, s.endsAt - DAY_END) + offTime;
+    // An error outweighs any day's worth of the other costs.
+    const cost =
+      100_000 * errorCount(s) +
+      s.totals.travel +
+      s.totals.waiting +
+      Math.max(0, s.endsAt - DAY_END) +
+      BEST_TIME_WEIGHT * late;
 
     if (cost < bestCost) {
       best = i;

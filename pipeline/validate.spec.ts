@@ -69,8 +69,9 @@ describe('validate', () => {
     });
   });
 
-  it("1. ignores the model's hours when the raw hours are null", () => {
+  it("1. ignores the model's hours when the raw hours give no times", () => {
     expect(run({ hours: null })).toMatchObject({ hours: everyDay(null), flags: [] });
+    expect(run({ hours: 'Evenings' })).toMatchObject({ hours: everyDay(null), flags: [] });
   });
 
   it('2. makes the months unknown when one is out of range', () => {
@@ -90,11 +91,7 @@ describe('validate', () => {
     expect(run({}, { hours: everyDay(null) })?.flags).toEqual(['not-interpreted']);
   });
 
-  it('5. flags hours-approximate when the raw hours have no times', () => {
-    expect(run({ hours: 'Evenings' })?.flags).toEqual(['hours-approximate']);
-  });
-
-  it('6. takes the duration from the field, then the text, then the type', () => {
+  it('5. takes the duration from the field, then the text, then the type', () => {
     expect(run({ duration_minutes: null }, { durationMin: 20 })).toMatchObject({
       durationMin: 20,
       flags: [],
@@ -107,7 +104,7 @@ describe('validate', () => {
     expect(run({ duration_minutes: null, type: 'boat' })?.durationMin).toBe(60);
   });
 
-  it('7. flags far-off coordinates and keeps them as given', () => {
+  it('6. flags far-off coordinates and keeps them as given', () => {
     expect(run({ city: 'Milan', latitude: 45.4724, longitude: 11.191 })).toMatchObject({
       lat: 45.4724,
       lng: 11.191,
@@ -122,17 +119,17 @@ describe('validate', () => {
     expect(run({ city: 'Chianti', latitude: 43.58, longitude: 11.32 })?.flags).toEqual([]);
   });
 
-  it('8. nulls a rating outside 0–5', () => {
+  it('7. nulls a rating outside 0–5', () => {
     expect(run({ rating: 7 })?.rating).toBeNull();
     expect(run({ rating: 2.1 })?.rating).toBe(2.1);
   });
 
-  it("9. passes the model's bestTime through", () => {
+  it("8. passes the model's bestTime through", () => {
     expect(run({}, { bestTime: 'evening' })?.bestTime).toBe('evening');
     expect(run({}, null)?.bestTime).toBeNull();
   });
 
-  it('9. drops a record that fails the final schema', () => {
+  it('8. drops a record that fails the final schema', () => {
     expect(run({ duration_minutes: 90.5 })).toBeNull();
   });
 });
