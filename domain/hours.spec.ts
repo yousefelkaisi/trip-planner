@@ -4,7 +4,12 @@ import { everyDay, makePlace } from './testing';
 
 const TZ = process.env['TZ'];
 afterEach(() => {
-  process.env['TZ'] = TZ;
+  // Assigning undefined would set TZ to the string "undefined".
+  if (TZ === undefined) {
+    delete process.env['TZ'];
+  } else {
+    process.env['TZ'] = TZ;
+  }
 });
 
 describe('dates and times', () => {

@@ -13,7 +13,12 @@ vi.stubGlobal(
 );
 
 describe('App', () => {
-  beforeEach(() => localStorage.clear());
+  beforeEach(() => {
+    localStorage.clear();
+    // The wizard's start date follows today, and the planned trip follows the start date.
+    vi.setSystemTime('2026-10-01');
+  });
+  afterEach(() => vi.useRealTimers());
 
   async function render() {
     const fixture = TestBed.createComponent(App);
@@ -23,7 +28,21 @@ describe('App', () => {
       [...el.querySelectorAll('button')].find((b) => b.textContent?.trim() === label)!.click();
       await fixture.whenStable();
     };
-    return { fixture, el, click };
+    const build = async () => {
+      await click('Next');
+      await click('Next');
+      await click('Build my trip');
+    };
+    // The first stop's ⋯ menu opens in an overlay outside the component.
+    const chooseFromMenu = async (item: string) => {
+      el.querySelector<HTMLButtonElement>('[aria-label="Stop actions"]')!.click();
+      await fixture.whenStable();
+      [...document.querySelectorAll<HTMLButtonElement>('[role="menuitem"]')]
+        .find((b) => b.textContent?.trim() === item)!
+        .click();
+      await fixture.whenStable();
+    };
+    return { fixture, el, click, build, chooseFromMenu };
   }
 
   it('opens the wizard when there is no saved trip', async () => {
@@ -32,10 +51,8 @@ describe('App', () => {
   });
 
   it('builds a trip from the wizard and shows the board', async () => {
-    const { el, click } = await render();
-    await click('Next');
-    await click('Next');
-    await click('Build my trip');
+    const { el, build } = await render();
+    await build();
 
     expect(el.querySelectorAll('[aria-label="Days"] button')).toHaveLength(4);
     expect(el.querySelectorAll('app-day-column')).toHaveLength(1);
@@ -43,32 +60,44 @@ describe('App', () => {
     expect(localStorage.getItem(STORAGE_KEY)).not.toBeNull();
   });
 
+  it('warns about a city that runs out of places before building', async () => {
+    const { fixture, el, click } = await render();
+    await click('Next');
+    await click('Next');
+    expect(el.textContent).not.toContain('has no more places');
+
+    for (const select of el.querySelectorAll('select')) {
+      select.value = 'bologna';
+      select.dispatchEvent(new Event('change'));
+      await fixture.whenStable();
+    }
+    expect(el.textContent).toMatch(/Bologna has no more places for Day 1\.\s+Turn on day trips/);
+  });
+
   it('ignores unfinished start dates and puts the last good one back on blur', async () => {
-    const { el, click } = await render();
-    const typeDates = () => {
+    const { fixture, el, build } = await render();
+    const typeDates = async () => {
       const input = el.querySelector<HTMLInputElement>('input[type="date"]')!;
       const start = input.value;
       for (const value of ['', '0002-10-16']) {
         input.value = value;
         input.dispatchEvent(new Event('change'));
         input.dispatchEvent(new Event('blur'));
+        await fixture.whenStable();
         expect(input.value).toBe(start);
+        expect(el.querySelector('[role="alert"]')).toBeNull();
       }
     };
 
-    typeDates();
-    await click('Next');
-    await click('Next');
-    await click('Build my trip');
-    typeDates();
-    expect(el.querySelector('[role="alert"]')).toBeNull();
+    await typeDates();
+    await build();
+    await typeDates();
+    expect(TestBed.inject(TripStore).trip()?.startDate).toBe('2026-10-16');
   });
 
   it('keeps the chosen place filter when the trip changes', async () => {
-    const { fixture, el, click } = await render();
-    await click('Next');
-    await click('Next');
-    await click('Build my trip');
+    const { fixture, el, click, build } = await render();
+    await build();
 
     const region = el.querySelector<HTMLSelectElement>('app-place-browser select')!;
     region.value = '';
@@ -80,10 +109,8 @@ describe('App', () => {
   });
 
   it('clears errors when switching between the board and the wizard', async () => {
-    const { fixture, el, click } = await render();
-    await click('Next');
-    await click('Next');
-    await click('Build my trip');
+    const { fixture, el, click, build } = await render();
+    await build();
 
     TestBed.inject(TripStore).error.set('Something went wrong');
     await fixture.whenStable();
@@ -102,14 +129,15 @@ describe('App', () => {
     await click('New trip');
     await click('Next');
 
-    expect(el.querySelectorAll('[aria-pressed="true"]')).toHaveLength(0);
+    const historic = [...el.querySelectorAll('button')].find(
+      (b) => b.textContent?.trim() === 'historic',
+    )!;
+    expect(historic.getAttribute('aria-pressed')).toBe('false');
   });
 
   it('shows the whole trip in the overview, then goes back to a day', async () => {
-    const { fixture, el, click } = await render();
-    await click('Next');
-    await click('Next');
-    await click('Build my trip');
+    const { fixture, el, click, build } = await render();
+    await build();
 
     await click('Overview');
     expect(el.querySelector('app-day-column')).toBeNull();
@@ -125,28 +153,40 @@ describe('App', () => {
   });
 
   it('removes a stop from its menu', async () => {
-    const { fixture, el, click } = await render();
-    await click('Next');
-    await click('Next');
-    await click('Build my trip');
+    const { el, build, chooseFromMenu } = await render();
+    await build();
     const names = () => [...el.querySelectorAll('app-stop-card h3')].map((h) => h.textContent);
     const [, ...rest] = names();
 
-    el.querySelector<HTMLButtonElement>('[aria-label="Stop actions"]')!.click();
-    await fixture.whenStable();
-    [...document.querySelectorAll<HTMLButtonElement>('[role="menuitem"]')]
-      .find((b) => b.textContent?.trim() === 'Remove')!
-      .click();
-    await fixture.whenStable();
+    await chooseFromMenu('Remove');
 
     expect(names()).toEqual(rest);
   });
 
+  it('moves a stop to another day from its menu, as one undo step', async () => {
+    const { fixture, el, click, build, chooseFromMenu } = await render();
+    await build();
+    const names = () => [...el.querySelectorAll('app-stop-card h3')].map((h) => h.textContent);
+    const showDay = async (i: number) => {
+      el.querySelectorAll<HTMLButtonElement>('[aria-label="Days"] button')[i].click();
+      await fixture.whenStable();
+    };
+    const [moved] = names();
+
+    await chooseFromMenu('Move to Day 2');
+    expect(names()).not.toContain(moved);
+    await showDay(1);
+    expect(names()).toContain(moved);
+
+    await click('Undo');
+    expect(names()).not.toContain(moved);
+    await showDay(0);
+    expect(names()).toContain(moved);
+  });
+
   it('lists places you can still add first, and searches only stated fields', async () => {
-    const { fixture, el, click } = await render();
-    await click('Next');
-    await click('Next');
-    await click('Build my trip');
+    const { fixture, el, build } = await render();
+    await build();
     const region = el.querySelector<HTMLSelectElement>('app-place-browser select')!;
     region.value = '';
     region.dispatchEvent(new Event('change'));

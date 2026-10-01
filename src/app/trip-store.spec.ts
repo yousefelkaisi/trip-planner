@@ -27,17 +27,36 @@ describe('TripStore', () => {
     expect(store.days()).toHaveLength(3);
   });
 
-  it('undoes and redoes whole steps', () => {
+  it('undoes and redoes whole steps in order', () => {
+    const store = TestBed.inject(TripStore);
+    const stops = () => store.trip()?.days.map((d) => d.stops);
+    store.dispatch(newTrip);
+    store.dispatch(addColosseum);
+    store.dispatch(
+      { type: 'removeStop', placeId: 'place_001' },
+      { type: 'addStop', day: 1, placeId: 'place_001' },
+    );
+
+    store.undo();
+    expect(stops()).toEqual([['place_001'], [], []]);
+    store.undo();
+    expect(stops()).toEqual([[], [], []]);
+    expect(store.canUndo()).toBe(false);
+
+    store.redo();
+    expect(stops()).toEqual([['place_001'], [], []]);
+    store.redo();
+    expect(stops()).toEqual([[], ['place_001'], []]);
+    expect(store.canRedo()).toBe(false);
+  });
+
+  it('drops the redo steps on a new edit', () => {
     const store = TestBed.inject(TripStore);
     store.dispatch(newTrip);
     store.dispatch(addColosseum);
-
     store.undo();
-    expect(store.trip()?.days[0].stops).toEqual([]);
-    expect(store.canRedo()).toBe(true);
 
-    store.redo();
-    expect(store.trip()?.days[0].stops).toEqual(['place_001']);
+    store.dispatch({ type: 'addStop', day: 0, placeId: 'place_005' });
     expect(store.canRedo()).toBe(false);
   });
 

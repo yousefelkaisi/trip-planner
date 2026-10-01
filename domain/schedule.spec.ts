@@ -19,9 +19,26 @@ describe('scheduleDay', () => {
   it('waits for opening and reports a long wait', () => {
     const day = schedule(makePlace({ hours: everyDay([{ open: '10:00', close: '18:00' }]) }));
     expect(day.stops[0]).toMatchObject({ arrive: 540, start: 600, end: 660 });
+    expect(day.totals).toEqual({ travel: 0, visiting: 60, waiting: 60 });
     expect(day.issues).toContainEqual(
       expect.objectContaining({ code: 'LONG_WAIT', message: '60 min free before this stop' }),
     );
+  });
+
+  it('uses a later opening when the visit no longer fits the first', () => {
+    const day = schedule(
+      makePlace({ id: 'a', durationMin: 300 }),
+      makePlace({
+        id: 'b',
+        durationMin: 90,
+        hours: everyDay([
+          { open: '12:00', close: '15:00' },
+          { open: '19:00', close: '23:00' },
+        ]),
+      }),
+    );
+    expect(day.stops[1]).toMatchObject({ arrive: 855, start: 1140 });
+    expect(codes(day)).not.toContain('CLOSES_DURING_VISIT');
   });
 
   it('puts a restaurant at lunch and the next one at dinner', () => {
@@ -39,7 +56,8 @@ describe('scheduleDay', () => {
   });
 
   it('starts a transfer day 30 minutes plus the train later', () => {
-    const florence = makePlace({ city: 'Florence', region: 'Tuscany', ...HUBS.florence });
+    const { lat, lng } = HUBS.florence;
+    const florence = makePlace({ city: 'Florence', region: 'Tuscany', lat, lng });
     const trip = makeTrip([
       { hub: 'rome', stops: [] },
       { hub: 'florence', stops: [florence.id] },

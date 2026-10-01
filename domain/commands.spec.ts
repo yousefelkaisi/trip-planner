@@ -41,9 +41,16 @@ describe('apply', () => {
         ],
       },
     });
-    expect(
-      apply(null, { type: 'newTrip', startDate: '2026-10-16', prefs, hubs: [] }, catalog).ok,
-    ).toBe(false);
+  });
+
+  it('rejects a new trip without a valid date or any city', () => {
+    const prefs = base().prefs;
+    expect(run({ type: 'newTrip', startDate: '2026-13-01', prefs, hubs: ['rome'] }, null)).toBe(
+      "2026-13-01 isn't a valid date",
+    );
+    expect(run({ type: 'newTrip', startDate: '2026-10-16', prefs, hubs: [] }, null)).toBe(
+      'Choose a city for at least one day',
+    );
   });
 
   it('needs a trip for every other command', () => {
@@ -67,6 +74,12 @@ describe('apply', () => {
     expect(run({ type: 'addStop', day: 0, placeId: 'c', index: 1 }, trip)).toEqual([
       ['a', 'c', 'b'],
     ]);
+  });
+
+  it('adds a stop at its best position when no index is given', () => {
+    // The places are identical, so every position ties and the earliest wins.
+    const trip = makeTrip([{ hub: 'rome', stops: ['a', 'b'] }]);
+    expect(run({ type: 'addStop', day: 0, placeId: 'c' }, trip)).toEqual([['c', 'a', 'b']]);
   });
 
   it('rejects a bad stop', () => {
@@ -106,6 +119,7 @@ describe('apply', () => {
 
   it('rejects a bad move', () => {
     expect(run({ type: 'moveStop', placeId: 'x', day: 0, index: 0 })).toBe("x isn't in the trip");
+    expect(run({ type: 'moveStop', placeId: 'a', day: 5, index: 0 })).toBe('There is no day 6');
     expect(run({ type: 'moveStop', placeId: 'a', day: 2, index: 0 })).toBe(
       "A isn't in the Florence area",
     );

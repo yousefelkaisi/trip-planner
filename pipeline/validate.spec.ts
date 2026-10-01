@@ -1,13 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
+import { ALL_MONTHS, everyDay } from '../domain/testing';
 import type { AiExtraction } from './models/ai-extraction';
 import { RecordSchema } from './models/record';
 import { cityRefs, validate } from './validate';
 
-vi.spyOn(console, 'warn').mockImplementation(() => {});
+const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-type Day = AiExtraction['hours']['mon'];
-const everyDay = (d: Day) => ({ mon: d, tue: d, wed: d, thu: d, fri: d, sat: d, sun: d });
-const ALL_MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 const day = [{ open: '09:00', close: '18:00' }];
 
 const baseRec = {
@@ -92,6 +90,7 @@ describe('validate', () => {
   });
 
   it('5. takes the duration from the field, then the text, then the type', () => {
+    expect(run({ duration_minutes: 60 }, { durationMin: 20 })?.durationMin).toBe(60);
     expect(run({ duration_minutes: null }, { durationMin: 20 })).toMatchObject({
       durationMin: 20,
       flags: [],
@@ -131,6 +130,7 @@ describe('validate', () => {
 
   it('8. drops a record that fails the final schema', () => {
     expect(run({ duration_minutes: 90.5 })).toBeNull();
+    expect(warn).toHaveBeenCalledWith('p1: dropped, invalid durationMin');
   });
 });
 
@@ -146,5 +146,18 @@ describe('cityRefs', () => {
       RecordSchema.parse({ ...baseRec, id: `p${i}`, city, latitude, longitude }),
     );
     expect(cityRefs(recs)).toEqual(new Map([['milan', { lat: 45.47, lng: 9.19 }]]));
+  });
+
+  it('averages the middle two points of an even count', () => {
+    const points = [
+      [41.75, 12.5],
+      [41.875, 12.25],
+      [42, 12.75],
+      [41.5, 12.375],
+    ];
+    const recs = points.map(([latitude, longitude], i) =>
+      RecordSchema.parse({ ...baseRec, id: `p${i}`, latitude, longitude }),
+    );
+    expect(cityRefs(recs).get('rome')).toEqual({ lat: 41.8125, lng: 12.4375 });
   });
 });
