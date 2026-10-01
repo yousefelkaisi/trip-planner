@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { BEST_TIMES } from '../../domain/model/place';
 
 // Loose on purpose: structured outputs can't enforce formats or ranges, so validate.ts checks them
 // and gives each problem its own consequence.
@@ -9,6 +10,7 @@ export const AiExtractionSchema = z.object({
   openMonths: z.array(z.number().int()),
   durationMin: z.number().int().nullable(),
   checkDates: z.boolean(),
+  bestTime: z.enum(BEST_TIMES).nullable(),
 });
 
 export type AiExtraction = z.infer<typeof AiExtractionSchema>;

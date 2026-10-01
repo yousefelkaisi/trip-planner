@@ -7,11 +7,13 @@ import { cityRefs, validate } from '../validate';
 
 type Golden = {
   id: string;
+  record?: unknown; // a synthetic record, for cases italy.json doesn't have
   hours?: Partial<Place['hours']>;
   closedDays?: string[];
   alwaysOpen?: boolean;
   openMonths?: number[];
   flags?: string[];
+  bestTime?: Place['bestTime'];
 };
 
 const golden: Golden[] = JSON.parse(readFileSync('pipeline/evals/golden.json', 'utf8'));
@@ -35,12 +37,13 @@ function failures(g: Golden, p: Place): string[] {
   expect('alwaysOpen', alwaysOpen, g.alwaysOpen);
   expect('openMonths', p.openMonths, g.openMonths);
   expect('flags', p.flags, g.flags);
+  expect('bestTime', p.bestTime, g.bestTime);
   return out;
 }
 
 const results = await Promise.all(
   golden.map(async (g) => {
-    const rec = recs.find((r) => r.id === g.id);
+    const rec = g.record ? parseAll([g.record])[0] : recs.find((r) => r.id === g.id);
     const place = rec && validate(rec, await aiExtract(rec), refs);
     return { id: g.id, failed: place ? failures(g, place) : ['dropped'] };
   }),

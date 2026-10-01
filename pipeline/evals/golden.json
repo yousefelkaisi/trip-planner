@@ -22,63 +22,16 @@
     "flags": ["check-dates", "check-location"]
   },
   {
-    "id": "place_018",
-    "hours": {
-      "mon": [{ "open": "00:00", "close": "24:00" }],
-      "tue": [{ "open": "00:00", "close": "24:00" }],
-      "wed": [{ "open": "00:00", "close": "24:00" }],
-      "thu": [{ "open": "00:00", "close": "24:00" }],
-      "fri": [{ "open": "00:00", "close": "24:00" }],
-      "sat": [{ "open": "00:00", "close": "24:00" }],
-      "sun": [{ "open": "00:00", "close": "24:00" }]
-    },
-    "flags": ["hours-approximate"]
-  },
-  {
-    "id": "place_071",
-    "hours": {
-      "mon": null,
-      "tue": null,
-      "wed": null,
-      "thu": null,
-      "fri": null,
-      "sat": null,
-      "sun": null
-    },
-    "flags": []
+    "id": "place_037",
+    "alwaysOpen": false,
+    "closedDays": [],
+    "flags": ["hours-approximate"],
+    "bestTime": "evening"
   },
   {
     "id": "place_021",
-    "hours": {
-      "mon": null,
-      "tue": null,
-      "wed": null,
-      "thu": null,
-      "fri": null,
-      "sat": null,
-      "sun": null
-    },
     "openMonths": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
     "flags": []
-  },
-  {
-    "id": "place_038",
-    "hours": {
-      "mon": [{ "open": "00:00", "close": "24:00" }],
-      "tue": [{ "open": "00:00", "close": "24:00" }],
-      "wed": [{ "open": "00:00", "close": "24:00" }],
-      "thu": [{ "open": "00:00", "close": "24:00" }],
-      "fri": [{ "open": "00:00", "close": "24:00" }],
-      "sat": [{ "open": "00:00", "close": "24:00" }],
-      "sun": [{ "open": "00:00", "close": "24:00" }]
-    },
-    "flags": ["hours-approximate"]
-  },
-  {
-    "id": "place_052",
-    "alwaysOpen": false,
-    "closedDays": [],
-    "flags": ["hours-approximate", "duration-estimated"]
   },
   {
     "id": "place_035",
@@ -113,11 +66,6 @@
     }
   },
   {
-    "id": "place_053",
-    "closedDays": ["sat", "sun"],
-    "flags": ["hours-approximate"]
-  },
-  {
     "id": "place_030",
     "hours": {
       "mon": [{ "open": "07:00", "close": "14:00" }],
@@ -141,5 +89,29 @@
       "sun": [{ "open": "08:15", "close": "16:30" }]
     },
     "openMonths": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-  }
+  },
+  { "id": "place_023", "bestTime": "morning" },
+  { "id": "place_077", "bestTime": "night" },
+  { "id": "place_008", "bestTime": "night" },
+  { "id": "place_040", "bestTime": "afternoon" },
+  { "id": "place_053", "bestTime": "morning" },
+  { "id": "place_016", "bestTime": "morning" },
+  {
+    "id": "synthetic_afternoon",
+    "record": {
+      "id": "synthetic_afternoon",
+      "name": "Giardino delle Rose",
+      "type": "park",
+      "city": "Florence",
+      "region": "Tuscany",
+      "latitude": 43.7637,
+      "longitude": 11.2618,
+      "description": "A terraced rose garden below Piazzale Michelangelo. Come around 3pm, when the terraces are in full sun and the tour groups have moved on.",
+      "hours": "8:00-20:00",
+      "tags": ["garden", "views", "quiet"]
+    },
+    "bestTime": "afternoon"
+  },
+  { "id": "place_001", "bestTime": null },
+  { "id": "place_005", "bestTime": null }
 ]

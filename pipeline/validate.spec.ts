@@ -26,6 +26,7 @@ const baseExtraction: AiExtraction = {
   openMonths: ALL_MONTHS,
   durationMin: null,
   checkDates: false,
+  bestTime: null,
 };
 const refs = new Map([
   ['rome', { lat: 41.9, lng: 12.5 }],
@@ -68,6 +69,10 @@ describe('validate', () => {
     });
   });
 
+  it("1. ignores the model's hours when the raw hours are null", () => {
+    expect(run({ hours: null })).toMatchObject({ hours: everyDay(null), flags: [] });
+  });
+
   it('2. makes the months unknown when one is out of range', () => {
     expect(run({}, { openMonths: [4, 13] })?.openMonths).toBeNull();
   });
@@ -86,9 +91,7 @@ describe('validate', () => {
   });
 
   it('5. flags hours-approximate when the raw hours have no times', () => {
-    expect(run({ hours: null })?.flags).toEqual(['hours-approximate']);
     expect(run({ hours: 'Evenings' })?.flags).toEqual(['hours-approximate']);
-    expect(run({ hours: null }, { hours: everyDay(null) })?.flags).toEqual([]);
   });
 
   it('6. takes the duration from the field, then the text, then the type', () => {
@@ -122,6 +125,11 @@ describe('validate', () => {
   it('8. nulls a rating outside 0–5', () => {
     expect(run({ rating: 7 })?.rating).toBeNull();
     expect(run({ rating: 2.1 })?.rating).toBe(2.1);
+  });
+
+  it("9. passes the model's bestTime through", () => {
+    expect(run({}, { bestTime: 'evening' })?.bestTime).toBe('evening');
+    expect(run({}, null)?.bestTime).toBeNull();
   });
 
   it('9. drops a record that fails the final schema', () => {
