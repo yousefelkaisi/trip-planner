@@ -1,0 +1,145 @@
+[
+  {
+    "id": "place_010",
+    "hours": {
+      "mon": [{ "open": "09:00", "close": "18:00" }],
+      "tue": [{ "open": "09:00", "close": "18:00" }],
+      "wed": [{ "open": "09:00", "close": "18:00" }],
+      "thu": [{ "open": "09:00", "close": "18:00" }],
+      "fri": [{ "open": "09:00", "close": "18:00" }],
+      "sat": [{ "open": "09:00", "close": "18:00" }]
+    },
+    "closedDays": ["sun"],
+    "flags": []
+  },
+  {
+    "id": "place_059",
+    "hours": {
+      "sat": [{ "open": "09:00", "close": "19:00" }],
+      "sun": [{ "open": "09:00", "close": "19:00" }]
+    },
+    "closedDays": ["mon", "tue", "wed", "thu", "fri"],
+    "flags": ["check-dates", "check-location"]
+  },
+  {
+    "id": "place_018",
+    "hours": {
+      "mon": [{ "open": "00:00", "close": "24:00" }],
+      "tue": [{ "open": "00:00", "close": "24:00" }],
+      "wed": [{ "open": "00:00", "close": "24:00" }],
+      "thu": [{ "open": "00:00", "close": "24:00" }],
+      "fri": [{ "open": "00:00", "close": "24:00" }],
+      "sat": [{ "open": "00:00", "close": "24:00" }],
+      "sun": [{ "open": "00:00", "close": "24:00" }]
+    },
+    "flags": ["hours-approximate"]
+  },
+  {
+    "id": "place_071",
+    "hours": {
+      "mon": null,
+      "tue": null,
+      "wed": null,
+      "thu": null,
+      "fri": null,
+      "sat": null,
+      "sun": null
+    },
+    "flags": []
+  },
+  {
+    "id": "place_021",
+    "hours": {
+      "mon": null,
+      "tue": null,
+      "wed": null,
+      "thu": null,
+      "fri": null,
+      "sat": null,
+      "sun": null
+    },
+    "openMonths": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    "flags": []
+  },
+  {
+    "id": "place_038",
+    "hours": {
+      "mon": [{ "open": "00:00", "close": "24:00" }],
+      "tue": [{ "open": "00:00", "close": "24:00" }],
+      "wed": [{ "open": "00:00", "close": "24:00" }],
+      "thu": [{ "open": "00:00", "close": "24:00" }],
+      "fri": [{ "open": "00:00", "close": "24:00" }],
+      "sat": [{ "open": "00:00", "close": "24:00" }],
+      "sun": [{ "open": "00:00", "close": "24:00" }]
+    },
+    "flags": ["hours-approximate"]
+  },
+  {
+    "id": "place_052",
+    "alwaysOpen": false,
+    "closedDays": [],
+    "flags": ["hours-approximate", "duration-estimated"]
+  },
+  {
+    "id": "place_035",
+    "openMonths": [4, 5, 6, 7, 8, 9, 10]
+  },
+  {
+    "id": "place_063",
+    "openMonths": [4, 5, 6, 7, 8, 9, 10]
+  },
+  {
+    "id": "place_065",
+    "hours": {
+      "wed": [{ "open": "12:30", "close": "23:30" }],
+      "thu": [{ "open": "12:30", "close": "23:30" }],
+      "fri": [{ "open": "12:30", "close": "23:30" }],
+      "sat": [{ "open": "12:30", "close": "23:30" }],
+      "sun": [{ "open": "12:30", "close": "23:30" }]
+    },
+    "closedDays": ["mon", "tue"],
+    "openMonths": [5, 6, 7, 8, 9]
+  },
+  {
+    "id": "place_020",
+    "hours": {
+      "mon": [{ "open": "08:00", "close": "01:00" }],
+      "tue": [{ "open": "08:00", "close": "01:00" }],
+      "wed": [{ "open": "08:00", "close": "01:00" }],
+      "thu": [{ "open": "08:00", "close": "01:00" }],
+      "fri": [{ "open": "08:00", "close": "01:00" }],
+      "sat": [{ "open": "08:00", "close": "01:00" }],
+      "sun": [{ "open": "08:00", "close": "01:00" }]
+    }
+  },
+  {
+    "id": "place_053",
+    "closedDays": ["sat", "sun"],
+    "flags": ["hours-approximate"]
+  },
+  {
+    "id": "place_030",
+    "hours": {
+      "mon": [{ "open": "07:00", "close": "14:00" }],
+      "tue": [{ "open": "07:00", "close": "14:00" }],
+      "wed": [{ "open": "07:00", "close": "14:00" }],
+      "thu": [{ "open": "07:00", "close": "14:00" }],
+      "fri": [{ "open": "07:00", "close": "14:00" }],
+      "sat": [{ "open": "07:00", "close": "17:00" }]
+    },
+    "closedDays": ["sun"]
+  },
+  {
+    "id": "place_034",
+    "hours": {
+      "mon": [{ "open": "08:15", "close": "16:30" }],
+      "tue": [{ "open": "08:15", "close": "16:30" }],
+      "wed": [{ "open": "08:15", "close": "16:30" }],
+      "thu": [{ "open": "08:15", "close": "16:30" }],
+      "fri": [{ "open": "08:15", "close": "16:30" }],
+      "sat": [{ "open": "08:15", "close": "16:30" }],
+      "sun": [{ "open": "08:15", "close": "16:30" }]
+    },
+    "openMonths": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+  }
+]
